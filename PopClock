@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+from cli import Cli
+from pop_clock import PopClock
+
+(options, args) = Cli().parse()
+
+PopClock(options, args).run()

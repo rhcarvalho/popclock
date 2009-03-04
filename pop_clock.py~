@@ -43,7 +43,7 @@ class PopClock (object):
         self.debug = options.debug
 
         if self.debug:
-            print "Options %s" % options
+            print options
             
         if options.message:
             self.message = options.message

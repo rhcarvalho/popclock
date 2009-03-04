@@ -34,13 +34,7 @@ class Cli (object):
                 dest="exitat",
                 default=5,
                 help="Minutes to auto close (default 5 minutes)")
-
-        self.__parser.add_option("-d", "--debug",
-                dest="debug",
-                action="store_true",
-                default=False,
-                help="Output debug messages")
-                                
+                
     def get_parser(self):
         return self.__parser
 

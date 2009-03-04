@@ -133,7 +133,7 @@ class Relogio:
 
         if self.timeline:
             sprintrender = self.smallfont.render(self.wikinfo.sprint,
-                                                        True, self.WHITE)
+                                                 True, self.WHITE)
             self.screen.blit(sprintrender, (100, 370))
 
             pygame.draw.line(self.screen, self.GRAY, (100, 400), (560, 400), 2)
@@ -186,7 +186,7 @@ class WikiInfo:
 
         wiki_header = urllib2.urlopen('%s/A3/SprintAtual?cover=print'%wiki)
         html_header = wiki_header.read()
-        current_sprint = re.compile("location.href='/A3/(.*)';").findall(html_header)
+        current_sprint = re.findall("location.href='/A3/(.*)';",html_header)
         if current_sprint:
             self.sprint = current_sprint[0].replace("A3Sprint", "Sprint ")
 
@@ -195,7 +195,8 @@ class WikiInfo:
         wiki_current_sprint = urllib2.urlopen(wiki_current_sprint)
         html_sprint = wiki_current_sprint.read()
 
-        pattern = '<li> ([0-9]{2} [A-Za-z]{3}) [0-9]{4} - [Daily Meeting|Sprint Planning|Review].*[^<]\n</li>'
+        pattern = '<li> ([0-9]{2} [A-Za-z]{3}) [0-9]{4}' \
+              ' - [Daily Meeting|Sprint Planning|Review].*[^<]\n</li>'
 
         dailys = re.compile(pattern).findall(html_sprint)
 

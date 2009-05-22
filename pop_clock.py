@@ -14,6 +14,8 @@ import locale
 import getopt
 import urllib2
 import re
+from config import SIZES
+from colors import Color
 
 
 class PopClock (object):
@@ -22,24 +24,26 @@ class PopClock (object):
         pygame.init()
         self.init_time = time.time()
 
+        resolution=None
+        
+        self.size = SIZES.get(resolution)
+        if self.size is None:
+            self.size = SIZES["640x480"]
+        
         # If you don't have DejaVuSans font: use this file 
         # or 'sudo apt-get install mscoretruefont' or
         #self.bigfont = pygame.font.Font("DejaVuSans.ttf", 90)
-        self.bigfont = pygame.font.SysFont("DejaVuSans", 90)
-        self.smallfont = pygame.font.SysFont("DejaVuSans", 20)
-        self.tinyfont = pygame.font.SysFont("DejaVuSans", 10)
-        self.WHITE = (255, 255, 255)
-        self.BLACK = (0, 0, 0)
-        self.GRAY = (55, 55, 55)
-        self.RED = (255, 0, 0)
-        self.YELLOW = (255, 255, 0)
-
+        self.bigfont = pygame.font.SysFont("DejaVuSans", self.size.bigfont)
+        self.mediumfont = pygame.font.SysFont("DejaVuSans", self.size.mediumfont)
+        self.smallfont = pygame.font.SysFont("DejaVuSans", self.size.smallfont)
+        self.tinyfont = pygame.font.SysFont("DejaVuSans", self.size.tinyfont)
+    
         self.quit = False
         self.time = " -- : -- : -- "
         self.timedesc = "..."
-        self.timecolor = self.WHITE
-        self.msgcolor = self.WHITE
-        self.bgcolor = self.BLACK
+        self.timecolor = Color.WHITE
+        self.msgcolor = Color.WHITE
+        self.bgcolor = Color.BLACK
         self.verbose = False
         self.timelimit = options.exitat
         self.message = ""
@@ -58,9 +62,9 @@ class PopClock (object):
             self.wikinfo = WikiInfo()
 
         if options.fullscreen:
-            self.screen = pygame.display.set_mode((640, 480), FULLSCREEN)
+            self.screen = pygame.display.set_mode(self.size.screen, FULLSCREEN)
         else:
-            self.screen = pygame.display.set_mode((640, 480))
+            self.screen = pygame.display.set_mode(self.size.screen)
 
         if options.soundfile:
             self.sound = pygame.mixer.Sound(options.soundfile)
@@ -75,20 +79,20 @@ class PopClock (object):
         self.time = strftime(" %H: %M:%S ")
         self.timedesc = strftime(" %A, %d %B %Y")
 
-        if self.msgcolor == self.WHITE:
-            self.msgcolor = self.BLACK
+        if self.msgcolor == Color.WHITE:
+            self.msgcolor = Color.BLACK
         else:
-            self.msgcolor = self.WHITE
+            self.msgcolor = Color.WHITE
 
         if self.alarm:
-            if self.bgcolor == self.RED:
-                self.bgcolor = self.YELLOW
-                self.msgcolor = self.RED
-                self.timecolor = self.RED
+            if self.bgcolor == Color.RED:
+                self.bgcolor = Color.YELLOW
+                self.msgcolor = Color.RED
+                self.timecolor = Color.RED
             else:
-                self.bgcolor = self.RED
-                self.msgcolor = self.YELLOW
-                self.timecolor = self.YELLOW
+                self.bgcolor = Color.RED
+                self.msgcolor = Color.YELLOW
+                self.timecolor = Color.YELLOW
 
         return
 
@@ -98,49 +102,59 @@ class PopClock (object):
         msgrender = self.bigfont.render(self.message, True, self.msgcolor)
         msgpos = msgrender.get_rect()
         msgpos.centerx = self.screen.get_rect().centerx
-        msgpos.centery = self.screen.get_rect().centery-120
+        msgpos.centery = self.size.message_top
         self.screen.blit(msgrender, msgpos)
 
         timerender = self.bigfont.render(self.time, True, self.timecolor)
         timepos = timerender.get_rect()
         timepos.centerx = self.screen.get_rect().centerx
-        timepos.centery = self.screen.get_rect().centery
+        timepos.centery = self.size.time_top
         self.screen.blit(timerender, timepos)
 
         timedescrender = self.smallfont.render(self.timedesc, True, self.timecolor)
         timedescpos = timedescrender.get_rect()
         timedescpos.centerx = self.screen.get_rect().centerx
-        timedescpos.centery = self.screen.get_rect().centery+65
+        timedescpos.centery = self.size.time_desc_top
         self.screen.blit(timedescrender, timedescpos)
 
         if self.timeline:
-            sprintrender = self.smallfont.render(self.wikinfo.sprint,
-                                                        True, self.WHITE)
-            self.screen.blit(sprintrender, (100, 370))
+            sprintrender = self.smallfont.render(self.wikinfo.sprint, True, Color.WHITE)
+            sprintreder_pos = self.size.timeline_left, self.size.timeline_sprint_top
+            self.screen.blit(sprintrender, sprintreder_pos)
 
-            pygame.draw.line(self.screen, self.GRAY, (100, 400), (560, 400), 2)
+            bgline_start = (self.size.timeline_left, self.size.timeline_linetop)
+            bgline_size = (len(self.wikinfo.datelist)+1) * self.size.timeline_dayline
+            bgline_end = (bgline_size, self.size.timeline_linetop)
+            bgline_width = self.size.timeline_width
+                                
+            pygame.draw.line(self.screen, Color.GRAY, bgline_start, bgline_end, bgline_width)
 
             qtd=0
             pastdays=0
             today = strftime("%d %b")
             future = False
+
             for day in self.wikinfo.datelist:
                 if (future):
-                    datarender = self.tinyfont.render(day, True, self.GRAY)
+                    datarender = self.tinyfont.render(day, True, Color.GRAY)
                 else:
-                    datarender = self.tinyfont.render(day, True, self.WHITE)
+                    datarender = self.tinyfont.render(day, True, Color.WHITE)
                     pastdays+=1
 
                 datapos = timedescrender.get_rect()
-                datapos.x = 100+(47*qtd)
-                datapos.y = 410
+                datapos.x = self.size.timeline_left+((self.size.timeline_dayline+1)*qtd)
+                datapos.y = self.size.timeline_datelist_top
                 self.screen.blit(datarender, datapos)
                 qtd+=1
                 if day == today:
                     future = True
 
-            pygame.draw.line(self.screen, self.RED, (100, 400),
-                             (100+(46*(pastdays)), 400), 2)
+            progress_start = (self.size.timeline_left, self.size.timeline_linetop)
+            progress_size = (self.size.timeline_left+(self.size.timeline_dayline*(pastdays)))
+            progress_end = (progress_size, self.size.timeline_linetop)
+            progress_width = self.size.timeline_width
+
+            pygame.draw.line(self.screen, Color.RED, progress_start, progress_end, progress_width)
 
         pygame.display.flip()
 
@@ -180,6 +194,8 @@ class WikiInfo:
         pattern = '<li> ([0-9]{2} [A-Za-z]{3}) [0-9]{4} - [Daily Meeting|Sprint Planning|Review].*[^<]\n</li>'
 
         dailys = re.compile(pattern).findall(html_sprint)
+        
+        dailys = sorted(list(set(dailys))) #ugly hack for duplicates, ok, do it better
 
         if dailys:
             #remove next planning

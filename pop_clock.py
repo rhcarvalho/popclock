@@ -1,7 +1,8 @@
 ## Digital clock with message and sound
 ## Evandro Flores - eof@eof.com.br
+## Special thanks to:
 ## Guilherme Chapiewski - chapa@gc.blog.br
-## Special thanks to: The Knights who say Ni! - knights@whosay.ni
+## The Knights who say Ni! - knights@whosay.ni
 
 import pygame
 from pygame.locals import *
@@ -31,23 +32,27 @@ class PopClock (object):
         self.BLACK = (0, 0, 0)
         self.GRAY = (55, 55, 55)
         self.RED = (255, 0, 0)
+        self.YELLOW = (255, 255, 0)
 
         self.quit = False
         self.time = " -- : -- : -- "
         self.timedesc = "..."
+        self.timecolor = self.WHITE
         self.msgcolor = self.WHITE
+        self.bgcolor = self.BLACK
         self.verbose = False
         self.timelimit = options.exitat
         self.message = ""
         self.timeline = False
         self.debug = options.debug
+        self.alarm = options.alarm
 
         if self.debug:
             print "Options %s" % options
-            
+
         if options.message:
             self.message = options.message
-            
+
         if options.timeline:
             self.timeline = True
             self.wikinfo = WikiInfo()
@@ -60,7 +65,7 @@ class PopClock (object):
         if options.soundfile:
             self.sound = pygame.mixer.Sound(options.soundfile)
             self.sound.play()
-            
+
         pygame.display.set_caption("PopClock")
 
     def update(self):
@@ -74,10 +79,21 @@ class PopClock (object):
             self.msgcolor = self.BLACK
         else:
             self.msgcolor = self.WHITE
+
+        if self.alarm:
+            if self.bgcolor == self.RED:
+                self.bgcolor = self.YELLOW
+                self.msgcolor = self.RED
+                self.timecolor = self.RED
+            else:
+                self.bgcolor = self.RED
+                self.msgcolor = self.YELLOW
+                self.timecolor = self.YELLOW
+
         return
 
     def draw(self):
-        self.screen.fill(self.BLACK)
+        self.screen.fill(self.bgcolor)
 
         msgrender = self.bigfont.render(self.message, True, self.msgcolor)
         msgpos = msgrender.get_rect()
@@ -85,13 +101,13 @@ class PopClock (object):
         msgpos.centery = self.screen.get_rect().centery-120
         self.screen.blit(msgrender, msgpos)
 
-        timerender = self.bigfont.render(self.time, True, self.WHITE)
+        timerender = self.bigfont.render(self.time, True, self.timecolor)
         timepos = timerender.get_rect()
         timepos.centerx = self.screen.get_rect().centerx
         timepos.centery = self.screen.get_rect().centery
         self.screen.blit(timerender, timepos)
 
-        timedescrender = self.smallfont.render(self.timedesc, True, self.WHITE)
+        timedescrender = self.smallfont.render(self.timedesc, True, self.timecolor)
         timedescpos = timedescrender.get_rect()
         timedescpos.centerx = self.screen.get_rect().centerx
         timedescpos.centery = self.screen.get_rect().centery+65

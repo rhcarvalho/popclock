@@ -12,7 +12,7 @@ class Cli (object):
                 dest="message",
                 default="",
                 help="Blink your message on the top of the clock")
-                
+
         self.__parser.add_option("-s", "--soundfile",
                 dest="soundfile",
                 default=None, 
@@ -23,7 +23,7 @@ class Cli (object):
                 action="store_true",
                 default=False, 
                 help="Show the clock on fullscreen")
-                
+
         self.__parser.add_option("-t", "--timeline",
                 dest="timeline",
                 action="store_true",
@@ -40,7 +40,13 @@ class Cli (object):
                 action="store_true",
                 default=False,
                 help="Output debug messages")
-                                
+
+        self.__parser.add_option("-a", "--alarm",
+                dest="alarm",
+                action="store_true",
+                default=False,
+                help="Blink a red background")
+
     def get_parser(self):
         return self.__parser
 

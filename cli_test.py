@@ -3,7 +3,7 @@ import unittest
 from cli import Cli
 
 
-class CliTest (unittest.TestCase):
+class CliTest(unittest.TestCase):
 
     def test_parameters(self):
         cli = Cli()
@@ -29,18 +29,18 @@ class CliTest (unittest.TestCase):
 
     def test_defaults(self):
         cli = Cli()
-        (opt,vls) = cli.parse()
+        opt, vls = cli.parse()
 
-        self.assertEquals(opt.message,'')
-        self.assertEquals(opt.soundfile,None)
-        self.assertEquals(opt.exitat,5)
-        self.assertEquals(opt.timeline,False)
-        self.assertEquals(opt.fullscreen,False)
-        self.assertEquals(opt.alarm,False)
+        self.assertEquals(opt.message, '')
+        self.assertEquals(opt.soundfile, None)
+        self.assertEquals(opt.exitat, 5)
+        self.assertEquals(opt.timeline, False)
+        self.assertEquals(opt.fullscreen, False)
+        self.assertEquals(opt.alarm, False)
 
     def test_if_have_just_that_options(self):
         cli = Cli()
-        (opt,vls) = cli.parse()
+        opt, vls = cli.parse()
 
         #FIXME: need to find another way to test if 'Cli' just have that options
         self.assertEquals(opt,{'fullscreen': False,
@@ -49,7 +49,8 @@ class CliTest (unittest.TestCase):
                                'soundfile': None,
                                'timeline': False,
                                'debug': False,
-                               'alarm': False})
+                               'alarm': False,
+                               'color': ''})
 
 
 #faz com que a classe saiba que é um teste unitário        

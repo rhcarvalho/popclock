@@ -6,12 +6,7 @@
 
 import pygame
 from pygame.locals import *
-import os
 import time
-from time import gmtime, strftime, sleep
-import sys
-import locale
-import getopt
 import urllib2
 import re
 from config import SIZES
@@ -24,7 +19,7 @@ class PopClock (object):
         pygame.init()
         self.init_time = time.time()
 
-        resolution=None
+        resolution = None
         
         self.size = SIZES.get(resolution)
         if self.size is None:
@@ -39,10 +34,11 @@ class PopClock (object):
         self.tinyfont = pygame.font.SysFont("DejaVuSans", self.size.tinyfont)
     
         self.quit = False
-        self.time = " -- : -- : -- "
+        self.time = "--:--:--"
         self.timedesc = "..."
         self.timecolor = Color.WHITE
         self.msgcolor = Color.WHITE
+        self.fgcolor = Color.__dict__.get(options.color.upper(), Color.WHITE)
         self.bgcolor = Color.BLACK
         self.verbose = False
         self.timelimit = options.exitat
@@ -76,13 +72,13 @@ class PopClock (object):
         if ((time.time() - self.init_time)/60) >= self.timelimit:
             self.quit = True
 
-        self.time = strftime(" %H: %M:%S ")
-        self.timedesc = strftime(" %A, %d %B %Y")
+        self.time = time.strftime("%H:%M:%S")
+        self.timedesc = time.strftime("%A, %d %B %Y")
 
-        if self.msgcolor == Color.WHITE:
-            self.msgcolor = Color.BLACK
+        if self.msgcolor == self.fgcolor:
+            self.msgcolor = self.bgcolor
         else:
-            self.msgcolor = Color.WHITE
+            self.msgcolor = self.fgcolor
 
         if self.alarm:
             if self.bgcolor == Color.RED:
@@ -94,29 +90,33 @@ class PopClock (object):
                 self.msgcolor = Color.YELLOW
                 self.timecolor = Color.YELLOW
 
-        return
-
     def draw(self):
         self.screen.fill(self.bgcolor)
 
-        msgrender = self.bigfont.render(self.message, True, self.msgcolor)
-        msgpos = msgrender.get_rect()
-        msgpos.centerx = self.screen.get_rect().centerx
-        msgpos.centery = self.size.message_top
-        self.screen.blit(msgrender, msgpos)
+        self.draw_message()
+        self.draw_clock()
+        self.draw_date()
+        self.draw_timeline()
 
-        timerender = self.bigfont.render(self.time, True, self.timecolor)
-        timepos = timerender.get_rect()
-        timepos.centerx = self.screen.get_rect().centerx
-        timepos.centery = self.size.time_top
-        self.screen.blit(timerender, timepos)
+        pygame.display.flip()
+        
+    def draw_text(self, font, text, color, centery):
+        rendered_text = font.render(text, True, color)
+        position = rendered_text.get_rect()
+        position.centerx = self.screen.get_rect().centerx
+        position.centery = centery
+        self.screen.blit(rendered_text, position)
 
-        timedescrender = self.smallfont.render(self.timedesc, True, self.timecolor)
-        timedescpos = timedescrender.get_rect()
-        timedescpos.centerx = self.screen.get_rect().centerx
-        timedescpos.centery = self.size.time_desc_top
-        self.screen.blit(timedescrender, timedescpos)
+    def draw_message(self):
+        self.draw_text(self.bigfont, self.message, self.msgcolor, self.size.message_top)
 
+    def draw_clock(self):
+        self.draw_text(self.bigfont, self.time, self.timecolor, self.size.time_top)
+
+    def draw_date(self):
+        self.draw_text(self.smallfont, self.timedesc, self.timecolor, self.size.time_desc_top)
+
+    def draw_timeline(self):
         if self.timeline:
             sprintrender = self.smallfont.render(self.wikinfo.sprint, True, Color.WHITE)
             sprintreder_pos = self.size.timeline_left, self.size.timeline_sprint_top
@@ -129,9 +129,8 @@ class PopClock (object):
                                 
             pygame.draw.line(self.screen, Color.GRAY, bgline_start, bgline_end, bgline_width)
 
-            qtd=0
-            pastdays=0
-            today = strftime("%d %b")
+            qtd, pastdays = 0, 0
+            today = time.strftime("%d %b")
             future = False
 
             for day in self.wikinfo.datelist:
@@ -139,13 +138,13 @@ class PopClock (object):
                     datarender = self.tinyfont.render(day, True, Color.GRAY)
                 else:
                     datarender = self.tinyfont.render(day, True, Color.WHITE)
-                    pastdays+=1
+                    pastdays += 1
 
                 datapos = timedescrender.get_rect()
                 datapos.x = self.size.timeline_left+((self.size.timeline_dayline+1)*qtd)
                 datapos.y = self.size.timeline_datelist_top
                 self.screen.blit(datarender, datapos)
-                qtd+=1
+                qtd += 1
                 if day == today:
                     future = True
 
@@ -156,19 +155,14 @@ class PopClock (object):
 
             pygame.draw.line(self.screen, Color.RED, progress_start, progress_end, progress_width)
 
-        pygame.display.flip()
-
     def run(self):
         while not self.quit:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == QUIT or event.type == KEYDOWN and event.key == K_ESCAPE:
                     self.quit = True
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        self.quit = True
             self.update()
             self.draw()
-            sleep(0.3)
+            time.sleep(0.3)
 
 #TODO: Make a plugin with WikiInfo 
 class WikiInfo:
@@ -180,7 +174,7 @@ class WikiInfo:
 
         wiki = 'http://wiki.globoi.com/view'
 
-        wiki_header = urllib2.urlopen('%s/A3/SprintAtual?cover=print'%wiki)
+        wiki_header = urllib2.urlopen('%s/A3/SprintAtual?cover=print' % wiki)
         html_header = wiki_header.read()
         current_sprint = re.compile("location.href='/A3/(.*)';").findall(html_header)
         if current_sprint:

@@ -13,6 +13,11 @@ class Cli (object):
                 default="",
                 help="Blink your message on the top of the clock")
 
+        self.__parser.add_option("-c", "--color",
+                dest="color",
+                default="",
+                help="Set the message color")
+
         self.__parser.add_option("-s", "--soundfile",
                 dest="soundfile",
                 default=None, 

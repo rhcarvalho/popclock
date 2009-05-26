@@ -195,7 +195,12 @@ class WikiInfo:
 
         dailys = re.compile(pattern).findall(html_sprint)
         
-        dailys = sorted(list(set(dailys))) #ugly hack for duplicates, ok, do it better
+        #remove duplicates
+        lastday = ''
+        for i, day in enumerate(dailys):
+            if day == lastday:
+                dailys.pop(i)
+            lastday = day
 
         if dailys:
             #remove next planning

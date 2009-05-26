@@ -140,7 +140,7 @@ class PopClock (object):
                     datarender = self.tinyfont.render(day, True, Color.WHITE)
                     pastdays += 1
 
-                datapos = timedescrender.get_rect()
+                datapos = datarender.get_rect()
                 datapos.x = self.size.timeline_left+((self.size.timeline_dayline+1)*qtd)
                 datapos.y = self.size.timeline_datelist_top
                 self.screen.blit(datarender, datapos)

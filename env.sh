@@ -5,4 +5,4 @@
 export DISPLAY=:0.0
 POPCLOCKHOME=$HOME/Projetos/PopClock
 
-$POPCLOCKHOME/PopClock $*
+$POPCLOCKHOME/PopClock "$@"

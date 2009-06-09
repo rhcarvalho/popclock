@@ -38,19 +38,19 @@ class CliTest(unittest.TestCase):
         self.assertEquals(opt.fullscreen, False)
         self.assertEquals(opt.alarm, False)
 
-    def test_if_have_just_that_options(self):
+    def test_if_have_just_those_options(self):
         cli = Cli()
         opt, vls = cli.parse()
 
         #FIXME: need to find another way to test if 'Cli' just have that options
-        self.assertEquals(opt,{'fullscreen': False,
-                               'message': '',
-                               'exitat': 5,
-                               'soundfile': None,
-                               'timeline': False,
-                               'debug': False,
-                               'alarm': False,
-                               'color': ''})
+        self.assertEquals(opt, {'fullscreen': False,
+                                'message': '',
+                                'exitat': 5,
+                                'soundfile': None,
+                                'timeline': False,
+                                'debug': False,
+                                'alarm': False,
+                                'color': ''})
 
 
 #faz com que a classe saiba que é um teste unitário        

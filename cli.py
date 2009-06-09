@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 from optparse import OptionParser
 
-class Cli (object):
+
+class Cli(object):
 
     def __init__(self):
         self.__config_parser()

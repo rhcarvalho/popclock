@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
 class Size(object):
     def __init__(self, screen, bigfont, mediumfont, smallfont, tinyfont,
                        message_top, time_top, time_desc_top,
                        timeline_sprint_top, timeline_left, timeline_linetop, 
-                       timeline_dayline, timeline_width, timeline_datelist_top
-                ):
+                       timeline_dayline, timeline_width, timeline_datelist_top):
         self.screen = screen
         self.bigfont = bigfont
         self.mediumfont = mediumfont

@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 class Color(object):
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)

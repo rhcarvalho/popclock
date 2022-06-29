@@ -1,16 +1,14 @@
 Usage: PopClock [options]
 
 Options:
-  -h, --help            show this help message and exit
-  -m MESSAGE, --message=MESSAGE
-                        Blink your message on the top of the clock
-  -c COLOR, --color=COLOR
-                        Set the message color
-  -s SOUNDFILE, --soundfile=SOUNDFILE
-                        Will play this file at startup
-  -f, --fullscreen      Show the clock on fullscreen
-  -t, --timeline        Show the Sprint Timeline (need to config wikipage)
-  -e EXITAT, --exitat=EXITAT
-                        Minutes to auto close (default 5 minutes)
-  -d, --debug           Output debug messages
-  -a, --alarm           Blink a red background
+  -h, --help : Shows this help message and exits
+
+  -m MESSAGE, --message=MESSAGE : Blinks your message on the top of the clock
+
+  -c COLOR, --color=COLOR : Sets the message color
+  -s SOUNDFILE, --soundfile=SOUNDFILE : Will play the specified file at startup
+  -f, --fullscreen : Shows the clock in fullscreen
+  -t, --timeline : Shows the Sprint Timeline (need to config wikipage)
+  -e EXITAT, --exitat=EXITAT : Minutes to auto close (default 5 minutes)
+  -d, --debug : Output debug messages
+  -a, --alarm : Blink a red background
